@@ -1,4 +1,3 @@
-// src/components/Header.jsx
 function Header({ currentPage, onNavigate, cartCount = 0 }) {
     const navStyle = {
       display: "flex",
@@ -17,9 +16,7 @@ function Header({ currentPage, onNavigate, cartCount = 0 }) {
   
     return (
       <header style={navStyle}>
-        <div style={{ fontWeight: "bold", fontSize: "1.2rem" }}>
-          React Multi-Page Demo
-        </div>
+        <div style={{ fontWeight: "bold", fontSize: "1.2rem" }}>React Multi-Page Demo</div>
   
         <nav>
           <ul style={{ display: "flex", gap: "15px", listStyle: "none", margin: 0, padding: 0 }}>

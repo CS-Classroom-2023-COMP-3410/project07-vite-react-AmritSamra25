@@ -1,57 +1,87 @@
-// src/components/ShoppingCart.jsx
-export default function ShoppingCart({
-    cartItems,
-    onIncrement,
-    onDecrement,
-    onRemove,
-    compact = false,
-  }) {
-    const totalQty = cartItems.reduce((sum, item) => sum + item.qty, 0);
-    const totalPrice = cartItems.reduce((sum, item) => sum + item.price * item.qty, 0);
+function ShoppingCart({ cartItems, onIncrement, onDecrement, onRemove, compact = false }) {
+    const totalItems = cartItems.reduce((sum, i) => sum + i.quantity, 0);
+    const totalPrice = cartItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
   
     return (
-      <div style={styles.card}>
-        <h3 style={styles.title}>
-          Shopping Cart {compact ? `(${totalQty})` : ""}
+      <div
+        style={{
+          border: "1px solid #ddd",
+          borderRadius: "10px",
+          padding: "15px",
+          backgroundColor: "#f8f9fa",
+          marginBottom: "20px",
+        }}
+      >
+        <h3 style={{ marginTop: 0 }}>
+          Shopping Cart {compact ? `(${totalItems} items)` : ""}
         </h3>
   
         {cartItems.length === 0 ? (
           <p style={{ margin: 0 }}>Cart is empty.</p>
         ) : (
           <>
-            <ul style={styles.list}>
+            <ul style={{ padding: 0, listStyle: "none", margin: 0 }}>
               {cartItems.map((item) => (
-                <li key={item.id} style={styles.row}>
+                <li
+                  key={item.id}
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    padding: "10px 0",
+                    borderBottom: "1px solid #ddd",
+                    gap: "10px",
+                  }}
+                >
                   <div style={{ flex: 1 }}>
-                    <div style={styles.name}>{item.name}</div>
-                    <div style={styles.meta}>
-                      ${item.price.toFixed(2)} × {item.qty}
-                    </div>
+                    <strong>{item.name}</strong> × {item.quantity}
+                    <div>${item.price * item.quantity}</div>
                   </div>
   
-                  <div style={styles.controls}>
-                    <button onClick={() => onDecrement(item.id)} style={styles.btn}>
+                  <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                    <button
+                      onClick={() => onDecrement(item.id)}
+                      style={btnStyle("#dc3545")}
+                      aria-label={`Decrease ${item.name}`}
+                    >
                       −
-                    </button>
-                    <button onClick={() => onIncrement(item.id)} style={styles.btn}>
-                      +
                     </button>
   
                     {!compact && (
-                      <button
-                        onClick={() => onRemove(item.id)}
-                        style={{ ...styles.btn, ...styles.danger }}
-                      >
-                        Remove
-                      </button>
+                      <>
+                        <button
+                          onClick={() => onIncrement(item.id)}
+                          style={btnStyle("#0d6efd")}
+                          aria-label={`Increase ${item.name}`}
+                        >
+                          +
+                        </button>
+  
+                        <button
+                          onClick={() => onRemove(item.id)}
+                          style={btnStyle("#6c757d")}
+                          aria-label={`Remove ${item.name}`}
+                        >
+                          Remove
+                        </button>
+                      </>
                     )}
                   </div>
                 </li>
               ))}
             </ul>
   
-            <div style={styles.footer}>
-              <strong>Total:</strong> ${totalPrice.toFixed(2)}
+            <div
+              style={{
+                marginTop: "15px",
+                paddingTop: "10px",
+                borderTop: "2px solid #ddd",
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
+              <strong>Total:</strong>
+              <strong>${totalPrice}</strong>
             </div>
           </>
         )}
@@ -59,29 +89,16 @@ export default function ShoppingCart({
     );
   }
   
-  const styles = {
-    card: {
-      border: "1px solid #ddd",
-      borderRadius: 12,
-      padding: 16,
-      margin: "16px auto",
-      maxWidth: 720,
-      textAlign: "left",
-    },
-    title: { marginTop: 0, marginBottom: 12 },
-    list: { listStyle: "none", padding: 0, margin: 0 },
-    row: {
-      display: "flex",
-      alignItems: "center",
-      gap: 12,
-      padding: "10px 0",
-      borderTop: "1px solid #eee",
-    },
-    name: { fontWeight: 700 },
-    meta: { fontSize: 14, opacity: 0.8 },
-    controls: { display: "flex", gap: 8, alignItems: "center" },
-    btn: { padding: "6px 10px", borderRadius: 8, border: "1px solid #ccc", cursor: "pointer" },
-    danger: { borderColor: "#f3b0b0" },
-    footer: { borderTop: "1px solid #eee", paddingTop: 10, marginTop: 10 },
-  };
+  function btnStyle(bg) {
+    return {
+      backgroundColor: bg,
+      color: "white",
+      border: "none",
+      padding: "8px 12px",
+      borderRadius: "6px",
+      cursor: "pointer",
+    };
+  }
+  
+  export default ShoppingCart;
   
