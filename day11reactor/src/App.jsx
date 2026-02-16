@@ -1,4 +1,3 @@
-// src/App.jsx
 import { useMemo, useState } from "react";
 import Header from "./components/Header";
 import ShoppingCart from "./components/ShoppingCart";
@@ -9,35 +8,28 @@ import ProfilePage from "./pages/ProfilePage";
 import CartPage from "./pages/CartPage";
 
 function App() {
-  // Simple navigation state management
   const [currentPage, setCurrentPage] = useState("home");
 
-  // LIFTED cart state (shared across pages)
-  const [cartItems, setCartItems] = useState([]); 
-  // expected item shape: { id, name, price, quantity }
+  // Global cart state (shared)
+  // item shape: { id, name, price, quantity }
+  const [cartItems, setCartItems] = useState([]);
 
   const handleNavigate = (pageId) => {
     setCurrentPage(pageId);
   };
 
-  // Cart helpers
-  const addToCart = (product) => {
-    // product: { id, name, price }
+  const addToCart = ({ id, name, price }) => {
     setCartItems((prev) => {
-      const existing = prev.find((i) => i.id === product.id);
+      const existing = prev.find((i) => i.id === id);
       if (existing) {
-        return prev.map((i) =>
-          i.id === product.id ? { ...i, quantity: i.quantity + 1 } : i
-        );
+        return prev.map((i) => (i.id === id ? { ...i, quantity: i.quantity + 1 } : i));
       }
-      return [...prev, { ...product, quantity: 1 }];
+      return [...prev, { id, name, price, quantity: 1 }];
     });
   };
 
   const incrementItem = (id) => {
-    setCartItems((prev) =>
-      prev.map((i) => (i.id === id ? { ...i, quantity: i.quantity + 1 } : i))
-    );
+    setCartItems((prev) => prev.map((i) => (i.id === id ? { ...i, quantity: i.quantity + 1 } : i)));
   };
 
   const decrementItem = (id) => {
@@ -52,16 +44,25 @@ function App() {
     setCartItems((prev) => prev.filter((i) => i.id !== id));
   };
 
+  const clearCart = () => setCartItems([]);
+
   const cartCount = useMemo(
     () => cartItems.reduce((sum, item) => sum + item.quantity, 0),
     [cartItems]
   );
 
-  // Render the appropriate page based on state
   const renderPage = () => {
     switch (currentPage) {
       case "products":
-        return <ProductsPage addToCart={addToCart} cartItems={cartItems} />;
+        return (
+          <ProductsPage
+            cartItems={cartItems}
+            addToCart={addToCart}
+            onIncrement={incrementItem}
+            onDecrement={decrementItem}
+            onRemove={removeItem}
+          />
+        );
       case "profile":
         return <ProfilePage />;
       case "cart":
@@ -71,6 +72,7 @@ function App() {
             onIncrement={incrementItem}
             onDecrement={decrementItem}
             onRemove={removeItem}
+            onClear={clearCart}
           />
         );
       case "home":
